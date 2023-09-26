@@ -97,9 +97,11 @@ def brand_delete(request, pk):
 
 @api_view(['GET'])
 def product_list(request):
-    product = Product.objects.all()
+    product = Product.objects.all().order_by('-id')
     serializer = ProductSerializer(data=product, many=True)
-    return  Response(serializer.data, status=status.HTTP_200_OK)
+    serializer.is_valid()
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 @api_view(['GET'])
 def product_detail(request, pk):

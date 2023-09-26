@@ -1,0 +1,273 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ecommerce</title>
+    <link rel="stylesheet" href="{% static 'frontend/list.css' %}">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+    rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100&family=Open+Sans:wght@300&display=swap" rel="stylesheet">
+
+</head>
+<body>
+   <div class="container" style="margin-bottom: 100px;">
+
+		<div id="product-container">
+			<div id="form-wrapper">
+				<form id="form">
+					<div class="flex-wrapper">
+						<div style="flex: 6">
+							<div>
+								<input id="title" class="form-control" type="text" name="title" placeholder="Name">
+								<input id="description" class="form-control" type="text" name="description" placeholder="Description">
+							</div>
+<!--							<div class="form-check">-->
+								<div>
+    								<input id="availability" type="checkbox" class="form-check-input">
+    								<label class="form-check-label" for="availability">Available</label>
+								</div>
+								<div>
+								    <label for="category">Category</label>
+    								<select class="form-control" id="category">
+									  {% for category in categories %}
+    								  <option>{{category.id}}</option>
+									  {% endfor %}
+    								</select>
+								</div>
+								<div>
+								    <label for="brand">Brand</label>
+    								<select id="brand" class="form-control">
+									  {% for brand in brands %}
+    								  <option>{{brand.id}}</option>
+									  {% endfor %}
+    								</select>
+								</div>
+<!--  							</div>-->
+						</div>
+						<div style="flex: 1">
+							<input id="submit" class="btn" type="submit" value="Add Product">
+						</div>
+					</div>
+				</form>
+			</div>
+
+			<div id="list-wrapper">
+
+			</div>
+		</div>
+
+	   	<div id="category-container">
+			<div id="category-form-wrapper">
+				<form id="category-form">
+					<div class="flex-wrapper">
+						<div style="flex: 6">
+							<div>
+								<input id="category-title" class="form-control" type="text" name="title" placeholder="Name">
+							</div>
+								<div>
+								    <label for="category">Parent of category</label>
+    								<select class="form-control" id="category-category">
+									  {% for category in categories %}
+    								  <option>{{category.id}}</option>
+									  {% endfor %}
+    								</select>
+								</div>
+						</div>
+						<div style="flex: 1">
+							<input id="category-submit" class="btn" type="submit" value="Add Category">
+						</div>
+					</div>
+				</form>
+			</div>
+			<div id="category-list-wrapper">
+
+			</div>
+		</div>
+
+	   <div id="brand-container">
+	   		<div id="brand-form-wrapper">
+				<form id="brand-form">
+					<div class="flex-wrapper">
+						<div style="flex: 6">
+							<div>
+								<input id="brand-title" class="form-control" type="text" name="title" placeholder="Name">
+							</div>
+						</div>
+						<div style="flex: 1">
+							<input id="brand-submit" class="btn" type="submit" value="Add Brand">
+						</div>
+				</form>
+	   		</div>
+		   <div id="brand-list-wrapper">
+
+			</div>
+	   </div>
+   </div>
+	<script type="text/javascript">
+
+		function getCookie(name) {
+    		let cookieValue = null;
+    		if (document.cookie && document.cookie !== '') {
+    		    const cookies = document.cookie.split(';');
+    		    for (let i = 0; i < cookies.length; i++) {
+    		        const cookie = cookies[i].trim();
+    		        // Does this cookie string begin with the name we want?
+    		        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+    		            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+    		            break;
+    		        }
+    		    }
+    	}
+    return cookieValue;
+	}
+	const csrftoken = getCookie('csrftoken');
+
+		buildProductList()
+		function buildProductList(){
+			var wrapper = document.getElementById('list-wrapper')
+			wrapper.innerHTML = ''
+			var url = 'http://127.0.0.1:8000/api/product-list/'
+			fetch(url)
+			.then((resp) => resp.json())
+			.then(function(data){
+				console.log('Data:', data)
+
+				var list = data
+				for (var i in list){
+					var item = `
+						<div id="data-row-${i}" class="product-wrapper flex-wrapper">
+							<div style="flex:7">
+								<span class="name">${list[i].name}</span>
+							</div>
+							<div style="flex:1">
+								<button class="btn btn-sm btn-outline-info edit">Edit </button>
+							</div>
+							<div style="flex:1">
+								<button class="btn btn-sm btn-outline-dark delete">-</button>
+							</div>
+						</div>
+					`
+					wrapper.innerHTML += item
+				}
+			})
+		}
+
+		buildCategoryList()
+		function buildCategoryList(){
+			var wrapper = document.getElementById('category-list-wrapper')
+			wrapper.innerHTML = ''
+			var url = 'http://127.0.0.1:8000/api/category-list/'
+			fetch(url)
+			.then((resp) => resp.json())
+			.then(function(data){
+				console.log('Data:', data)
+
+				var list = data
+				for (var i in list){
+					var item = `
+						<div id="data-row-${i}" class="category-wrapper flex-wrapper">
+							<div style="flex:7">
+								<span class="name">${list[i].name}</span>
+							</div>
+							<div style="flex:1">
+								<button class="btn btn-sm btn-outline-info edit">Edit </button>
+							</div>
+							<div style="flex:1">
+								<button class="btn btn-sm btn-outline-dark delete">-</button>
+							</div>
+						</div>
+					`
+					wrapper.innerHTML += item
+				}
+			})
+		}
+
+		buildBrandList()
+		function buildBrandList(){
+			var wrapper = document.getElementById('brand-list-wrapper')
+			wrapper.innerHTML = ''
+			var url = 'http://127.0.0.1:8000/api/brand-list/'
+			fetch(url)
+			.then((resp) => resp.json())
+			.then(function(data){
+				console.log('Data:', data)
+
+				var list = data
+				for (var i in list){
+					var item = `
+						<div id="data-row-${i}" class="brand-wrapper flex-wrapper">
+							<div style="flex:7">
+								<span class="name">${list[i].name}</span>
+							</div>
+							<div style="flex:1">
+								<button class="btn btn-sm btn-outline-info edit">Edit </button>
+							</div>
+							<div style="flex:1">
+								<button class="btn btn-sm btn-outline-dark delete">-</button>
+							</div>
+						</div>
+					`
+					wrapper.innerHTML += item
+				}
+			})
+		}
+
+
+			var form = document.getElementById('form-wrapper')
+			form.addEventListener('submit', function(e){
+			e.preventDefault()
+			var url = 'http://127.0.0.1:8000/api/product-create/'
+			var title = document.getElementById('title').value
+			var description = document.getElementById('description').value
+			var availability = document.getElementById('availability').value
+			if (availability === "on") {
+    		  availability = "true";
+			} else {
+    		availability = "false";
+			}
+			var category = document.getElementById('category').value
+			var brand = document.getElementById('brand').value
+
+			fetch(url, {
+				method:'POST',
+				headers:{
+					'Content-type':'application/json',
+					'X-CSRFToken':csrftoken,
+				},
+				body:JSON.stringify({'name': title, 'description': description, 'available': availability, 'category': category, 'brand': brand})
+			}
+			).then(function(response){
+				buildProductList()
+				document.getElementById('form').reset()
+			})
+		})
+
+		var formBrand = document.getElementById('brand-form-wrapper')
+		formBrand.addEventListener('submit', function(e){
+			e.preventDefault()
+			console.log('Form submitted')
+			var url = 'http://127.0.0.1:8000/api/brand-create/'
+			var title = document.getElementById('brand-title').value
+			fetch(url, {
+				method:'POST',
+				headers:{
+					'Content-type':'application/json',
+					'X-CSRFToken':csrftoken,
+				},
+				body:JSON.stringify({'name':title})
+			}
+			).then(function(response){
+				buildBrandList()
+				buildProductList()
+				document.getElementById('brand-form').reset()
+			})
+		})
+
+
+	</script>
+</body>
+</html>

@@ -25,7 +25,6 @@
 								<input id="title" class="form-control" type="text" name="title" placeholder="Name">
 								<input id="description" class="form-control" type="text" name="description" placeholder="Description">
 							</div>
-<!--							<div class="form-check">-->
 								<div>
     								<input id="availability" type="checkbox" class="form-check-input">
     								<label class="form-check-label" for="availability">Available</label>
@@ -46,7 +45,6 @@
 									  {% endfor %}
     								</select>
 								</div>
-<!--  							</div>-->
 						</div>
 						<div style="flex: 1">
 							<input id="submit" class="btn" type="submit" value="Add Product">
@@ -70,7 +68,7 @@
 							</div>
 								<div>
 								    <label for="category">Parent of category</label>
-    								<select class="form-control" id="category-category">
+    								<select class="form-control" id="category-parent">
 									  {% for category in categories %}
     								  <option>{{category.id}}</option>
 									  {% endfor %}
@@ -102,9 +100,9 @@
 						</div>
 				</form>
 	   		</div>
-		   <div id="brand-list-wrapper">
+	   </div>
+	   <div id="brand-list-wrapper">
 
-			</div>
 	   </div>
    </div>
 	<script type="text/javascript">
@@ -134,17 +132,15 @@
 			fetch(url)
 			.then((resp) => resp.json())
 			.then(function(data){
-				console.log('Data:', data)
-
-				var list = data
-				for (var i in list){
+				var listProduct = data
+				for (var i in listProduct){
 					var item = `
 						<div id="data-row-${i}" class="product-wrapper flex-wrapper">
 							<div style="flex:7">
-								<span class="name">${list[i].name}</span>
+								<span class="name">${listProduct[i].name}</span>
 							</div>
 							<div style="flex:1">
-								<button class="btn btn-sm btn-outline-info edit">Edit </button>
+								<button class="btn btn-sm btn-outline-info edit-product">Edit </button>
 							</div>
 							<div style="flex:1">
 								<button class="btn btn-sm btn-outline-dark delete">-</button>
@@ -152,6 +148,14 @@
 						</div>
 					`
 					wrapper.innerHTML += item
+				}
+				for (var i in listProduct){
+					var editBtn = document.getElementsByClassName('edit-product')[i]
+					editBtn.addEventListener('click', (function(item){
+						return function(){
+							editProduct(item)
+						}
+					})(listProduct[i]))
 				}
 			})
 		}
@@ -166,15 +170,15 @@
 			.then(function(data){
 				console.log('Data:', data)
 
-				var list = data
-				for (var i in list){
+				var listCategory = data
+				for (var i in listCategory ){
 					var item = `
 						<div id="data-row-${i}" class="category-wrapper flex-wrapper">
 							<div style="flex:7">
-								<span class="name">${list[i].name}</span>
+								<span class="name">${listCategory [i].name}</span>
 							</div>
 							<div style="flex:1">
-								<button class="btn btn-sm btn-outline-info edit">Edit </button>
+								<button class="btn btn-sm btn-outline-info edit-category">Edit </button>
 							</div>
 							<div style="flex:1">
 								<button class="btn btn-sm btn-outline-dark delete">-</button>
@@ -183,9 +187,18 @@
 					`
 					wrapper.innerHTML += item
 				}
+				for (var i in listCategory){
+					var editBtn = document.getElementsByClassName('edit-category')[i]
+					editBtn.addEventListener('click', (function(item){
+						return function(){
+							editCategory(item)
+						}
+					})(listCategory [i]))
+				}
 			})
 		}
 
+		var activeBrandItem = null
 		buildBrandList()
 		function buildBrandList(){
 			var wrapper = document.getElementById('brand-list-wrapper')
@@ -195,16 +208,15 @@
 			.then((resp) => resp.json())
 			.then(function(data){
 				console.log('Data:', data)
-
-				var list = data
-				for (var i in list){
+				var listBrand = data
+				for (var i in listBrand){
 					var item = `
 						<div id="data-row-${i}" class="brand-wrapper flex-wrapper">
 							<div style="flex:7">
-								<span class="name">${list[i].name}</span>
+								<span class="name">${listBrand[i].name}</span>
 							</div>
 							<div style="flex:1">
-								<button class="btn btn-sm btn-outline-info edit">Edit </button>
+								<button class="btn btn-sm btn-outline-info edit-brand">Edit </button>
 							</div>
 							<div style="flex:1">
 								<button class="btn btn-sm btn-outline-dark delete">-</button>
@@ -213,18 +225,31 @@
 					`
 					wrapper.innerHTML += item
 				}
+				for (var i in listBrand){
+					var editBtn = document.getElementsByClassName('edit-brand')[i]
+
+					editBtn.addEventListener('click', (function(item){
+						return function(){
+							editBrand(item)
+						}
+					})(listBrand[i]))
+				}
 			})
 		}
 
-
+			var activeProductItem = null
 			var form = document.getElementById('form-wrapper')
 			form.addEventListener('submit', function(e){
 			e.preventDefault()
 			var url = 'http://127.0.0.1:8000/api/product-create/'
+			if (activeProductItem != null){
+				var url = `http://127.0.0.1:8000/api/product-update/${activeProductItem.id}`
+				activeProductItem = null
+			}
 			var title = document.getElementById('title').value
 			var description = document.getElementById('description').value
 			var availability = document.getElementById('availability').value
-			if (availability === "on") {
+			if (availability == "on") {
     		  availability = "true";
 			} else {
     		availability = "false";
@@ -251,6 +276,10 @@
 			e.preventDefault()
 			console.log('Form submitted')
 			var url = 'http://127.0.0.1:8000/api/brand-create/'
+			if (activeBrandItem != null){
+				var url = `http://127.0.0.1:8000/api/brand-update/${activeBrandItem.id}`
+				activeBrandItem = null
+			}
 			var title = document.getElementById('brand-title').value
 			fetch(url, {
 				method:'POST',
@@ -267,7 +296,52 @@
 			})
 		})
 
+		var activeCategoryItem = null
+		var formCategory = document.getElementById('category-form-wrapper')
+		formCategory.addEventListener('submit', function(e){
+			e.preventDefault()
+			console.log('Form submitted')
+			var url = 'http://127.0.0.1:8000/api/category-create/'
+			if (activeCategoryItem != null){
+				var url = `http://127.0.0.1:8000/api/category-update/${activeCategoryItem.id}`
+				activeCategoryItem = null
+			}
+			var title = document.getElementById('category-title').value
+			var categoryParent = document.getElementById('category-parent').value
+			fetch(url, {
+				method:'POST',
+				headers:{
+					'Content-type':'application/json',
+					'X-CSRFToken':csrftoken,
+				},
+				body:JSON.stringify({'name':title, 'parent': categoryParent})
+			}
+			).then(function(response){
+				buildCategoryList()
+				buildProductList()
+				document.getElementById('category-form').reset()
+			})
+		})
 
+		function editBrand(item){
+			activeBrandItem = item
+			document.getElementById('brand-title').value = activeBrandItem.name
+		}
+
+		function editCategory(item){
+			activeCategoryItem = item
+			document.getElementById('category-title').value = activeCategoryItem.name
+			document.getElementById('category-parent').value = activeCategoryItem.parent
+		}
+
+		function editProduct(item){
+			activeProductItem = item
+			document.getElementById('title').value = activeProductItem.name
+			document.getElementById('description').value = activeProductItem.description
+			document.getElementById('category').value = activeProductItem.category
+			document.getElementById('brand').value = activeProductItem.brand
+			console.log(activeProductItem.available)
+		}
 	</script>
 </body>
 </html>

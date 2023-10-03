@@ -2,10 +2,10 @@ from .models import Brand, Category, Product
 from .serializers import CategorySerializer, BrandSerializer, ProductSerializer
 from rest_framework.response import Response
 from django.core.exceptions import ObjectDoesNotExist
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework import status
+from rest_framework.permissions import AllowAny
 # Create your views here.
-
 
 @api_view(['GET'])
 def category_list(request):
@@ -66,7 +66,7 @@ def brand_detail(request, pk):
     serializer = BrandSerializer(brand, many=False)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
-@api_view(['POST'])
+@api_view(['POST', 'GET'])
 def brand_update(request, pk):
     try:
         brand = Brand.objects.get(pk=pk)
@@ -101,7 +101,6 @@ def product_list(request):
     serializer = ProductSerializer(data=product, many=True)
     serializer.is_valid()
     return Response(serializer.data, status=status.HTTP_200_OK)
-
 
 @api_view(['GET'])
 def product_detail(request, pk):

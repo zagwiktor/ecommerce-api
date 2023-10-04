@@ -69,9 +69,11 @@
 								<div>
 								    <label for="category">Parent of category</label>
     								<select class="form-control" id="category-parent">
+									   <option></option>
 									  {% for category in categories %}
     								  <option>{{category.id}}</option>
 									  {% endfor %}
+
     								</select>
 								</div>
 						</div>
@@ -143,7 +145,7 @@
 								<button class="btn btn-sm btn-outline-info edit-product">Edit </button>
 							</div>
 							<div style="flex:1">
-								<button class="btn btn-sm btn-outline-dark delete">-</button>
+								<button class="btn btn-sm btn-outline-dark delete-product">-</button>
 							</div>
 						</div>
 					`
@@ -154,6 +156,13 @@
 					editBtn.addEventListener('click', (function(item){
 						return function(){
 							editProduct(item)
+						}
+					})(listProduct[i]))
+
+					var delBtn = document.getElementsByClassName('delete-product')[i]
+					delBtn.addEventListener('click', (function(item){
+						return function(){
+							delProduct(item)
 						}
 					})(listProduct[i]))
 				}
@@ -181,7 +190,7 @@
 								<button class="btn btn-sm btn-outline-info edit-category">Edit </button>
 							</div>
 							<div style="flex:1">
-								<button class="btn btn-sm btn-outline-dark delete">-</button>
+								<button class="btn btn-sm btn-outline-dark delete-category">-</button>
 							</div>
 						</div>
 					`
@@ -193,7 +202,14 @@
 						return function(){
 							editCategory(item)
 						}
-					})(listCategory [i]))
+					})(listCategory[i]))
+
+					var delBtn = document.getElementsByClassName('delete-category')[i]
+					delBtn.addEventListener('click', (function(item){
+						return function(){
+							delCategory(item)
+						}
+					})(listCategory[i]))
 				}
 			})
 		}
@@ -219,7 +235,7 @@
 								<button class="btn btn-sm btn-outline-info edit-brand">Edit </button>
 							</div>
 							<div style="flex:1">
-								<button class="btn btn-sm btn-outline-dark delete">-</button>
+								<button class="btn btn-sm btn-outline-dark delete-brand">-</button>
 							</div>
 						</div>
 					`
@@ -231,6 +247,13 @@
 					editBtn.addEventListener('click', (function(item){
 						return function(){
 							editBrand(item)
+						}
+					})(listBrand[i]))
+
+					var delBtn = document.getElementsByClassName('delete-brand')[i]
+					delBtn.addEventListener('click', (function(item){
+						return function(){
+							delBrand(item)
 						}
 					})(listBrand[i]))
 				}
@@ -340,7 +363,45 @@
 			document.getElementById('description').value = activeProductItem.description
 			document.getElementById('category').value = activeProductItem.category
 			document.getElementById('brand').value = activeProductItem.brand
-			console.log(activeProductItem.available)
+		}
+
+		function delProduct(item){
+			var delUrl = `http://127.0.0.1:8000/api/product-delete/${item.id}`
+			fetch(delUrl, {
+				method:'DELETE',
+				headers:{
+					'Content-type':'application/json',
+					'X-CSRFToken':csrftoken,
+				}
+			}).then((response) => {
+				buildProductList()
+			})
+		}
+
+		function delCategory(item){
+			var delUrl = `http://127.0.0.1:8000/api/category-delete/${item.id}`
+			fetch(delUrl, {
+				method:'DELETE',
+				headers:{
+					'Content-type':'application/json',
+					'X-CSRFToken':csrftoken,
+				}
+			}).then((response) => {
+				buildCategoryList()
+			})
+		}
+
+		function delBrand(item){
+			var delUrl = `http://127.0.0.1:8000/api/brand-delete/${item.id}`
+			fetch(delUrl, {
+				method:'DELETE',
+				headers:{
+					'Content-type':'application/json',
+					'X-CSRFToken':csrftoken,
+				}
+			}).then((response) => {
+				buildBrandList()
+			})
 		}
 	</script>
 </body>

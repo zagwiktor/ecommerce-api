@@ -12,7 +12,7 @@ class Brand(models.Model):
 
 class Category(MPTTModel):
     name = models.CharField(max_length=50)
-    parent = TreeForeignKey("self", on_delete=models.PROTECT, null=True, blank=True)
+    parent = TreeForeignKey("self", on_delete=models.CASCADE, null=True, blank=True)
 
     class MPTTMeta:
         order_insertion_by = ["name"]

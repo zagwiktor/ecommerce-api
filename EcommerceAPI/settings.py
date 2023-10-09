@@ -86,7 +86,7 @@ DATABASES = {
         "NAME": "ecommerce",
         "USER": "ecommerce",
         "PASSWORD": os.environ.get('DATABASE_PASSWORD'),
-        "HOST": "db",
+        "HOST": "Localhost",
         "PORT": "5432",
     }
 }

@@ -7,8 +7,11 @@ services:
       - POSTGRES_DB=ecommerce
       - POSTGRES_USER=ecommerce
       - POSTGRES_PASSWORD=ecommerce123
+    container_name: db
     ports:
       - "5432:5432"
+    networks:
+      - djangonetwork
   web:
     build: .
     command: python manage.py runserver 0.0.0.0:8000
@@ -18,3 +21,15 @@ services:
       - "8000:8000"
     depends_on:
       - db
+    links:
+      - db:db
+    env_file:
+      - .env
+    networks:
+      - djangonetwork
+
+networks:
+      djangonetwork:
+          driver: bridge
+
+

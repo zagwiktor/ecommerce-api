@@ -109,6 +109,7 @@ def product_detail(request, pk):
     except ObjectDoesNotExist:
         return Response({'message': 'Product is not exists.'}, status=status.HTTP_404_NOT_FOUND)
     serializer = ProductSerializer(data=product, many=False)
+    serializer.is_valid()
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 @api_view(['POST'])

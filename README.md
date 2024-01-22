@@ -1,6 +1,35 @@
 # EcommerceAPI
 
 EcommerceApi is a straightforward project in which users can add products, their categories, and brands using an API. The API was built using Django Rest Framework, while for the frontend, I used HTML, CSS, and JavaScript.
+# Installation
+
+1. Install Python version 3.11 [(Python)](https://www.python.org/downloads/)
+
+2. Pull the repository
+
+3. I strongly recommend using a specific virtual environment for this project. You can create one by typing the following 
+   command:
+
+```bash
+python -m venv <name-of-your-enviroment> 
+```
+* Activate the virtual environment:
+Windows
+```bash
+.\env\Scripts\activate
+```
+macOS/Linux
+```bash
+source env/bin/activate
+```
+* And add them by accessing the interpreter settings and selecting the file from 
+the folder where we created our virtual environment (name-of-your-environment -> Scripts -> python.exe).
+
+4. To install all necessary libraries in the project terminal, type in:
+
+```bash
+pip install -r requirements.txt
+```
 
 # Documentation
 

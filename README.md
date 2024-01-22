@@ -105,3 +105,7 @@ Allowed methods:
 >DELETE
 
 This endpoint will delete product associated with provided id.
+
+# The appearance of EcommerceApi
+
+![image](https://github.com/zagwiktor/ecommerce-api/assets/92055936/fe076d37-12a7-41cd-9f70-53720d38a7f5)
